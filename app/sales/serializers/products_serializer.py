@@ -4,6 +4,6 @@ from ..models.products import Product
 class ProductSerializer(ModelSerializer):
   class Meta:
     model = Product
-    fields = ['id', 'name', 'description', 'price']
+    fields = ['id', 'name', 'description', 'price', 'category']
     readonly = ['created_at', 'updated_at']
     

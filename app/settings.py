@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -76,9 +77,17 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'que_hay_pa_comer',         # Nombre de la base de datos
+        'USER': 'postgres',            # Usuario de la base de datos
+        'PASSWORD': 'comida753#',     # Contraseña del usuario
+        'HOST': 'postgres-db',        # Nombre del contenedor de PostgreSQL
+        'PORT': '5432',               # Puerto de PostgreSQL
     }
 }
 

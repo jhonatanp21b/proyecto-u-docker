@@ -7,6 +7,6 @@ class CategorySerializer(ModelSerializer):
 
   class Meta:
     model = Category
-    fields = ['id', 'name', 'description', 'products']
+    fields = ['id', 'code', 'name', 'description', 'products']
     readonly = ['created_at', 'updated_at']
     
