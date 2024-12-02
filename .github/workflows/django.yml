@@ -1,58 +1,44 @@
-name: CI/CD Pipeline Django
+name: Django CI
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+
     services:
       postgres:
-        image: postgres:14
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: comida753
+          POSTGRES_DB: que_hay_pa_comer
         ports:
           - 5432:5432
-        env:
-          POSTGRES_DB: que_hay_pa_comer
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: comida753#
         options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.9'
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: Check out the repository
+        uses: actions/checkout@v3
 
-    - name: Wait for PostgreSQL
-      run: |
-        until pg_isready -h 127.0.0.1 -p 5432; do
-          echo "Waiting for PostgreSQL to be ready..."
-          sleep 1
-        done
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
 
-    - name: Set up database
-      env:
-        DATABASE_URL: postgres://postgres:comida753#@127.0.0.1:5432/que_hay_pa_comer
-      run: |
-        python manage.py migrate
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Run tests
-      env:
-        DATABASE_URL: postgres://postgres:comida753#@127.0.0.1:5432/que_hay_pa_comer
-      run: |
-        pytest --ds=app.settings --cov=. --cov-report=xml
+      - name: Run migrations
+        env:
+          DATABASE_URL: postgres://postgres:comida753@localhost:5432/que_hay_pa_comer
+        run: python manage.py migrate
