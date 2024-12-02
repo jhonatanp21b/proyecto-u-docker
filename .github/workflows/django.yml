@@ -55,5 +55,7 @@ jobs:
           PGUSER: postgres
           PGPASSWORD: comida753
 
-      - name: Run migrations
-        run: python manage.py migrate
+      - name: Run Tests with Pytest
+        run: |
+          # pytest --ds=app.settings --cov=. --cov-report=xml
+          python manage.py test
