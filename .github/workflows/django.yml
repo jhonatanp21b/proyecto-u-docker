@@ -56,6 +56,4 @@ jobs:
           PGPASSWORD: comida753
 
       - name: Run migrations
-        env:
-          DATABASE_URL: postgres://postgres:comida753@postgres:5432/que_hay_pa_comer
         run: python manage.py migrate
