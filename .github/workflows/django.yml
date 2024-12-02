@@ -8,24 +8,51 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: que_hay_pa_comer
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: comida753#
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
-    - name: Set up Docker Compose
-      run: |
-        docker-compose build
-
-    - name: Run Migrations
-      run: |
-        docker-compose run web python manage.py migrate --noinput
-
-    - name: Run Tests
-      run: |
-        docker-compose run web pytest --ds=app.settings --cov=. --cov-report=xml
     
-    - name: Generate Coverage Report
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
       run: |
-        docker-compose run web coverage html
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Wait for PostgreSQL
+      run: |
+        until pg_isready -h 127.0.0.1 -p 5432; do
+          echo "Waiting for PostgreSQL to be ready..."
+          sleep 1
+        done
+
+    - name: Set up database
+      env:
+        DATABASE_URL: postgres://postgres:comida753#@127.0.0.1:5432/que_hay_pa_comer
+      run: |
+        python manage.py migrate
+
+    - name: Run tests
+      env:
+        DATABASE_URL: postgres://postgres:comida753#@127.0.0.1:5432/que_hay_pa_comer
+      run: |
+        pytest --ds=app.settings --cov=. --cov-report=xml
