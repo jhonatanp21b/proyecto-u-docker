@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'que_hay_pa_comer',         # Nombre de la base de datos
         'USER': 'postgres',            # Usuario de la base de datos
         'PASSWORD': 'comida753#',     # Contraseña del usuario
-        'HOST': 'postgres-db',        # Nombre del contenedor de PostgreSQL
+        'HOST': 'postgres',        # Nombre del contenedor de PostgreSQL
         'PORT': '5432',               # Puerto de PostgreSQL
     }
 }
