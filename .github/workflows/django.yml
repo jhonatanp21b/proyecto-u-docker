@@ -13,15 +13,19 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.9'
-        
-    - name: Install dependencies
+      
+    - name: Set up Docker Compose
       run: |
-        pip install -r requirements.txt
+        docker-compose build
+
+    - name: Run Migrations
+      run: |
+        docker-compose run web python manage.py migrate --noinput
+
     - name: Run Tests
       run: |
-        python manage.py test
+        docker-compose run web pytest --ds=app.settings --cov=. --cov-report=xml
+    
+    - name: Generate Coverage Report
+      run: |
+        docker-compose run web coverage html
